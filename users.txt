@@ -1,1 +1,0 @@
-{"name": "eug", "email": "fath34d@gmail.com", "id": {"name": "eug", "email": "fath34d@gmail.com", "id": {"name": "eug", "email": "fath34d@gmail.com", "id": 1}{"name": "Bob", "email": "fath34d@gmail.com", "id": 1}{"name": "Bob", "email": "fath34d@gmail.com", "id": 1}{"name": "Bob", "email": "fath34d@gmail.com", "id": 1}
