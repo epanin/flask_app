@@ -1,2 +1,14 @@
-{"name": "Josh", "email": "fath34d@gmail.com", "id": "b0c1ea3b-eb63-45fd-8879-48e44080c26c"}
-{"name": "Jonathan", "email": "fath34d@gmail.com", "id": "73f7e539-b2ee-45a1-bb78-ce6a0371622a"}
+{
+    "users_data":{
+        "b0c1ea3b-eb63-45fd-8879-48e44080c26c":{
+            "id":"b0c1ea3b-eb63-45fd-8879-48e44080c26c",
+            "name":"Josh",
+            "email": "fath34d@gmail.com"
+        },
+        "73f7e539-b2ee-45a1-bb78-ce6a0371622a":{
+            "id":"73f7e539-b2ee-45a1-bb78-ce6a0371622a",
+            "name":"Jonathan",
+            "email": "fath34d@gmail.com"
+        }
+    }    
+}

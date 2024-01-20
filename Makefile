@@ -1,2 +1,2 @@
 start:
-	poetry run flask --app lesson_ws.example --debug run --port 8000
+	poetry run flask --app lesson_ws.router --debug run --port 8000
