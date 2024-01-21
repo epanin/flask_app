@@ -6,10 +6,17 @@
   <title>Users</title>
 </head>
 <body>
+  {% if messages %}
+    <ul class="flashes">
+    {% for category, message in messages %}
+      <li class="{{ category }}">{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
   <table>
     {% for user in users %}
     <tr>
-      <td><a href="{{ url_for('user', id=user.id) }}"> {{ user.name }}</a></td>
+      <td><a href="{{ url_for('user_get', id=user.id) }}"> {{ user.name }}</a></td>
       <td>{{ user.email }}</td>
     </tr>
     {% endfor %}

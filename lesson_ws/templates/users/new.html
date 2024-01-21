@@ -12,8 +12,8 @@
             Nickname: 
             <input type="text" name="name" value="{{ user.name }}">
         </label>
-        {% if errors['name'] %}
-            <div> {{ errors['name'] }}</div>
+        {% if errors.name %}
+            <div> {{ errors.name }}</div>
         {% endif %}
     </div>
     <div>
@@ -21,8 +21,8 @@
             Email: 
             <input type="email" required name="email" value="{{ user.email }}">
         </label>
-        {% if errors['email'] %}
-            <div> {{ errors['email'] }}</div>
+        {% if errors.email %}
+            <div> {{ errors.email }}</div>
         {% endif %}
     </div>
     <input type="submit" value="Submit">

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editing</title>
+</head>
+<body>
+    <form action="{{ url_for('user_patch', id=user.id) }}"  method="post">
+        <div>
+            <label">
+                *Nickname
+                <input type="text" name="name" value="{{ user.name }}">
+            </label>
+            {% if errors.name %}
+                <div>{{ errors.name }}</div>
+            {% endif %}
+            <input type="submit" value="Update">
+        </div>
+        <div>
+            <label>
+                *Email: 
+                <input type="email" required name="email" value="{{ user.email }}">
+            </label>
+            {% if errors.email %}
+                <div> {{ errors.email }}</div>
+            {% endif %}
+        </div>
+    </form>
+</body>
+</html>

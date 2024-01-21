@@ -12,25 +12,27 @@ def hello_world():
 # Read
 
 @app.get('/users')
-def users():
-    users_list = users_rep.get_users()
+def users_get():
+    users = users_rep.get_users()
+    users_list = [info for info in users.values()]
+    messages = get_flashed_messages(with_categories=True)
     return render_template(
         'users/index.html',
-        users=users_list
+        users=users_list,
+        messages=messages
     )
 
 @app.get('/user/<id>')
-def user(id):
-    messages = get_flashed_messages(with_categories=True)
+def user_get(id):
     user_info = users_rep.find_user(id)
     if not user_info:
-        pass
+        return 'Page not found', 404
     return render_template(
         'users/show.html',
-        user=user_info, 
-        messages=messages
+        user=user_info
         )
 
+# Create
 
 @app.route('/users/new')
 def users_new():
@@ -47,21 +49,62 @@ def users_new():
 @app.post('/users')
 def users_post():
     user = request.form.to_dict()
-    errors = {}#validate(user)
+    errors = users_rep.validate(user)
     if errors:
         return render_template(
             'users/new.html',
             user=user, 
             errors=errors
         ), 422
-    id = str(uuid.uuid4())
-    user['id'] = id
-    flash('New user created!', 'success')
-    with open('lesson_ws/data/users.txt', 'a', encoding='utf-8') as f:
-        json.dump(user, f)
-        f.write('\n') 
-    return redirect(url_for('users_get', name=user.get('name')), code=302)
+    users_rep.save_user(user)
+    flash('New user created!', 'success')    
+    return redirect(url_for('users_get'), code=302)
 
-
+# Update
    
+@app.route('/user/<id>/edit')
+def user_edit(id):
+    user_info = users_rep.find_user(id)
+    errors = {}
+    if not user_info:
+        return 'Page not found', 404
+    return render_template(
+        'users/edit.html',
+        errors=errors,
+        user=user_info
+        )
 
+@app.post('/user/<id>/patch')
+def user_patch(id):
+    user_info = users_rep.find_user(id)
+    user_data = request.form.to_dict()
+    errors = users_rep.validate(user_data)
+    if errors:
+        render_template(
+            'users/edit.html',
+        errors=errors,
+        user=user_info
+        ), 422
+    user_info['name'] = user_data['name']
+    user_info['email'] = user_data['email']
+    users_rep.save_user(user_info)
+    flash('User has been updated!', 'success')    
+    return redirect(url_for('users_get'), code=302)
+
+# Delete
+
+@app.route('/user/<id>/delete')
+def user_delete(id):
+    user_info = users_rep.find_user(id)
+    if not user_info:
+        return 'Page not found', 404
+    return render_template(
+        'users/delete.html',
+        user=user_info
+        )
+
+@app.post('/users/<id>/delete')
+def user_destroy(id):
+    users_rep.destroy(id)
+    flash('User has been deleted', 'success')
+    return redirect(url_for('users_get'))
