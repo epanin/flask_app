@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for, flash, get_flashed_messages
+from flask import Flask, request, make_response, render_template, redirect, url_for, flash, get_flashed_messages
 import json, uuid, lesson_ws.data.users as users_rep
 
 app = Flask(__name__)
@@ -13,8 +13,10 @@ def hello_world():
 
 @app.get('/users')
 def users_get():
-    users = users_rep.get_users()
-    users_list = [info for info in users.values()]
+    #users = users_rep.get_users()
+    #users_list = [info for info in users.values()]
+    users_dict: dict = json.loads(request.cookies.get('users', json.dumps({})))
+    users_list = list(users_dict.values())
     messages = get_flashed_messages(with_categories=True)
     return render_template(
         'users/index.html',
@@ -24,7 +26,9 @@ def users_get():
 
 @app.get('/user/<id>')
 def user_get(id):
-    user_info = users_rep.find_user(id)
+    #user_info = users_rep.find_user(id)
+    users_dict: dict = json.loads(request.cookies.get('users', json.dumps({})))
+    user_info = users_dict.get(id)
     if not user_info:
         return 'Page not found', 404
     return render_template(
@@ -56,15 +60,22 @@ def users_post():
             user=user, 
             errors=errors
         ), 422
-    users_rep.save_user(user)
+    #users_rep.save_user(user)
+    users_dict: dict = json.loads(request.cookies.get('users', json.dumps({})))
+    id = str(uuid.uuid4())
+    user['id'] = id
+    users_dict[id] = user
+    response = make_response(redirect(url_for('users_get'), code=302))
+    response.set_cookie('users', json.dumps(users_dict))
     flash('New user created!', 'success')    
-    return redirect(url_for('users_get'), code=302)
+    return response
 
 # Update
    
 @app.route('/user/<id>/edit')
 def user_edit(id):
-    user_info = users_rep.find_user(id)
+    users_dict: dict = json.loads(request.cookies.get('users', json.dumps({})))
+    user_info = users_dict.get(id)
     errors = {}
     if not user_info:
         return 'Page not found', 404
@@ -76,7 +87,8 @@ def user_edit(id):
 
 @app.post('/user/<id>/patch')
 def user_patch(id):
-    user_info = users_rep.find_user(id)
+    users_dict: dict = json.loads(request.cookies.get('users', json.dumps({})))
+    user_info = users_dict.get(id)
     user_data = request.form.to_dict()
     errors = users_rep.validate(user_data)
     if errors:
@@ -87,15 +99,19 @@ def user_patch(id):
         ), 422
     user_info['name'] = user_data['name']
     user_info['email'] = user_data['email']
-    users_rep.save_user(user_info)
+    #users_rep.save_user(user_info)
+    response = make_response(redirect(url_for('users_get'), code=302))
+    response.set_cookie('users', json.dumps(users_dict))
     flash('User has been updated!', 'success')    
-    return redirect(url_for('users_get'), code=302)
+    return response
 
 # Delete
 
 @app.route('/user/<id>/delete')
 def user_delete(id):
-    user_info = users_rep.find_user(id)
+    #user_info = users_rep.find_user(id)
+    users_dict: dict = json.loads(request.cookies.get('users', json.dumps({})))
+    user_info = users_dict.get(id)
     if not user_info:
         return 'Page not found', 404
     return render_template(
@@ -105,6 +121,10 @@ def user_delete(id):
 
 @app.post('/users/<id>/delete')
 def user_destroy(id):
-    users_rep.destroy(id)
+    #users_rep.destroy(id)
+    users_dict: dict = json.loads(request.cookies.get('users', json.dumps({})))
+    users_dict.pop(id)
+    response = make_response(redirect(url_for('users_get'), code=302))
+    response.set_cookie('users', json.dumps(users_dict))
     flash('User has been deleted', 'success')
-    return redirect(url_for('users_get'))
+    return response
