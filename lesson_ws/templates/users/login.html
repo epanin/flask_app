@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <form action="{{ url_for('login') }}" method="get">
+        <label>
+            <h1>Login</h1>
+            <input type="text" required name="email" value="{{ credential_email }}">
+        </label>
+        {% if errors.name %}
+            <div> {{ errors.name }}</div>
+        {% endif %}
+        <input type="submit" value="Login">
+    </form>
+</body>
+</html>

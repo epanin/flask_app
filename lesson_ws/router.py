@@ -1,13 +1,30 @@
-from flask import Flask, request, render_template, redirect, url_for, flash, get_flashed_messages
+from flask import Flask, request, render_template, redirect, url_for, flash, get_flashed_messages, session
 import json, uuid, lesson_ws.data.users as users_rep
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
 
 @app.route('/')
-def hello_world():
-    print(request.headers)
-    return 'Welcome to Flask\n'
+def root():
+    if session.get('email') is None:
+        errors = {}
+        credentials = {}
+        return render_template('users/login.html',
+                            errors=errors,
+                            credentials=credentials)
+    else:
+        return redirect(url_for('users_get'), code=302)
+
+@app.get('/login')
+def login():
+    errors = {}
+    credential_email = request.args.get('email')
+    if errors:
+        return render_template('users/login.html',
+                           errors=errors,
+                           credentials=credential_email)
+    session['email'] = credential_email
+    return redirect(url_for('users_get'), code=302)
 
 # Read
 
@@ -16,10 +33,12 @@ def users_get():
     users = users_rep.get_users()
     users_list = [info for info in users.values()]
     messages = get_flashed_messages(with_categories=True)
+    credential_email = session.get('email')
     return render_template(
         'users/index.html',
         users=users_list,
-        messages=messages
+        messages=messages, 
+        credential_email=credential_email
     )
 
 @app.get('/user/<id>')
@@ -38,7 +57,6 @@ def user_get(id):
 def users_new():
     user = {'name': '', 'email': ''}
     errors = {}
-
     return render_template(
         'users/new.html',
         user=user, 
