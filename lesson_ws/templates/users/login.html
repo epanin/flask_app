@@ -6,10 +6,10 @@
     <title>Login</title>
 </head>
 <body>
-    <form action="{{ url_for('login') }}" method="get">
+    <form action="{{ url_for('login') }}" method="post">
         <label>
             <h1>Login</h1>
-            <input type="text" required name="email" value="{{ credential_email }}">
+            <input type="text" required name="email" value="{{ credentials.email }}">
         </label>
         {% if errors.name %}
             <div> {{ errors.name }}</div>

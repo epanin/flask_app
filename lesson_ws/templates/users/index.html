@@ -22,11 +22,11 @@
     {% endfor %}
   </table>
   {% if credential_email %}
-    <form action="{{ url_for('root') }}" method="get">
+    <form action="{{ url_for('logout') }}" method="post">
      <label>
       {{ credential_email }}
      </label>
-      <input type="button" value="Logout">
+      <input type="submit" value="Logout">
     </form>
   {% endif %}
 </body>

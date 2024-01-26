@@ -15,16 +15,25 @@ def root():
     else:
         return redirect(url_for('users_get'), code=302)
 
-@app.get('/login')
+@app.post('/login')
 def login():
     errors = {}
-    credential_email = request.args.get('email')
+    credentials = request.form.to_dict()
     if errors:
         return render_template('users/login.html',
                            errors=errors,
-                           credentials=credential_email)
-    session['email'] = credential_email
+                           credentials=credentials)
+    session['email'] = credentials.get('email')
     return redirect(url_for('users_get'), code=302)
+
+@app.post('/logout')
+def logout():
+    session.clear()
+    errors = {}
+    credentials = request.form.to_dict()
+    return render_template('users/login.html',
+                           errors=errors,
+                           credentials=credentials)
 
 # Read
 
